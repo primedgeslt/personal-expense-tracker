@@ -21,5 +21,9 @@ transactionForm.addEventListener("submit", function (event) {
     category: categoryInput.value,
     date: dateInput.value
   };
-  console.log(newTransaction);
+  transactions.push(newTransaction);
+
+console.log(transactions);
+
+transactionForm.reset();
 });
