@@ -1,17 +1,6 @@
-const transactionForm = document.querySelector("#transaction-form");
-
-let transactions = [];
-
-transactionForm.addEventListener("submit", function (event) {
-  event.preventDefault();
-
-  console.log("The form was submitted.");
-});
-
-
 // collect the user’s input and turn it into one transaction object.
 
-// const transactionForm = document.querySelector("#transaction-form");
+const transactionForm = document.querySelector("#transaction-form");
 
 const descriptionInput = document.querySelector("#description");
 const amountInput = document.querySelector("#amount");
@@ -19,7 +8,7 @@ const typeInput = document.querySelector("#type");
 const categoryInput = document.querySelector("#category");
 const dateInput = document.querySelector("#date");
 
-// let transactions = [];
+let transactions = [];
 
 transactionForm.addEventListener("submit", function (event) {
   event.preventDefault();
