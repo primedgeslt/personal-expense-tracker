@@ -10,6 +10,44 @@ const dateInput = document.querySelector("#date");
 
 let transactions = [];
 
+  // This function will display every transaction in the array.
+
+function renderTransactions() {
+  transactionList.replaceChildren();
+
+  if (transactions.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.textContent = "No transactions yet.";
+    transactionList.append(emptyMessage);
+    return;
+  }
+
+  transactions.forEach(function (transaction) {
+    const transactionItem = document.createElement("article");
+    transactionItem.classList.add("transaction-item");
+
+    const transactionDescription = document.createElement("h3");
+    transactionDescription.textContent = transaction.description;
+
+    const transactionDetails = document.createElement("p");
+    transactionDetails.textContent =
+      `${transaction.category} • ${transaction.date}`;
+
+    const transactionAmount = document.createElement("strong");
+    transactionAmount.textContent =
+      `${transaction.type === "expense" ? "-" : "+"}${transaction.amount}`;
+
+    transactionItem.append(
+      transactionDescription,
+      transactionDetails,
+      transactionAmount
+    );
+
+    transactionList.append(transactionItem);
+  });
+}
+}
+
 transactionForm.addEventListener("submit", function (event) {
   event.preventDefault();
 
@@ -21,9 +59,15 @@ transactionForm.addEventListener("submit", function (event) {
     category: categoryInput.value,
     date: dateInput.value
   };
-  transactions.push(newTransaction);
+transactions.push(newTransaction);
+
+renderTransactions();
 
 console.log(transactions);
 
 transactionForm.reset();
 });
+
+// display all transactions.
+const transactionList = document.querySelector("#transaction-list");
+
