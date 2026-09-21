@@ -8,13 +8,23 @@ const categoryInput = document.querySelector("#category");
 const dateInput = document.querySelector("#date");
 const transactionList = document.querySelector("#transaction-list");
 
-//Select the summary elements
+// Search and filter controls
+const searchInput = document.querySelector("#search");
+const filterTypeInput = document.querySelector("#filter-type");
+const filterCategoryInput = document.querySelector("#filter-category");
+
+// Summary elements
 const balanceTotal = document.querySelector("#balance-total");
 const incomeTotal = document.querySelector("#income-total");
 const expenseTotal = document.querySelector("#expense-total");
 
-
 let transactions = loadTransactions();
+
+let filters = {
+  search: "",
+  type: "all",
+  category: "all"
+};
 
 function loadTransactions() {
   const savedTransactions = localStorage.getItem(STORAGE_KEY);
@@ -35,7 +45,6 @@ function saveTransactions() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
 }
 
-//Add the currency formatter
 function formatCurrency(amount) {
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
@@ -43,7 +52,6 @@ function formatCurrency(amount) {
   }).format(amount);
 }
 
-// Add the totals function
 function updateSummary() {
   const income = transactions
     .filter(function (transaction) {
@@ -68,17 +76,46 @@ function updateSummary() {
   expenseTotal.textContent = formatCurrency(expenses);
 }
 
+function getFilteredTransactions() {
+  return transactions.filter(function (transaction) {
+    const description = transaction.description.toLowerCase();
+    const searchTerm = filters.search.toLowerCase();
+
+    const matchesSearch = description.includes(searchTerm);
+
+    const matchesType =
+      filters.type === "all" || transaction.type === filters.type;
+
+    const matchesCategory =
+      filters.category === "all" ||
+      transaction.category === filters.category;
+
+    return matchesSearch && matchesType && matchesCategory;
+  });
+}
+
 function renderTransactions() {
   transactionList.replaceChildren();
 
-  if (transactions.length === 0) {
+  const filteredTransactions = getFilteredTransactions();
+
+  if (filteredTransactions.length === 0) {
     const emptyMessage = document.createElement("p");
-    emptyMessage.textContent = "No transactions yet.";
+    emptyMessage.classList.add("empty-state");
+
+    if (transactions.length === 0) {
+      emptyMessage.textContent =
+        "No transactions yet. Add your first transaction above.";
+    } else {
+      emptyMessage.textContent =
+        "No transactions match the current filters.";
+    }
+
     transactionList.append(emptyMessage);
     return;
   }
 
-  transactions.forEach(function (transaction) {
+  filteredTransactions.forEach(function (transaction) {
     const transactionItem = document.createElement("article");
 
     transactionItem.classList.add(
@@ -109,18 +146,17 @@ function renderTransactions() {
     deleteButton.classList.add("delete-button");
     deleteButton.dataset.transactionId = transaction.id;
 
-transactionItem.append(
-  transactionDescription,
-  transactionDetails,
-  transactionAmount,
-  deleteButton
-);
+    transactionItem.append(
+      transactionDescription,
+      transactionDetails,
+      transactionAmount,
+      deleteButton
+    );
 
     transactionList.append(transactionItem);
   });
 }
 
-// delete event listener
 function deleteTransaction(transactionId) {
   transactions = transactions.filter(function (transaction) {
     return String(transaction.id) !== String(transactionId);
@@ -141,6 +177,21 @@ transactionList.addEventListener("click", function (event) {
   deleteTransaction(transactionId);
 });
 
+searchInput.addEventListener("input", function (event) {
+  filters.search = event.target.value.trim();
+  renderTransactions();
+});
+
+filterTypeInput.addEventListener("change", function (event) {
+  filters.type = event.target.value;
+  renderTransactions();
+});
+
+filterCategoryInput.addEventListener("change", function (event) {
+  filters.category = event.target.value;
+  renderTransactions();
+});
+
 transactionForm.addEventListener("submit", function (event) {
   event.preventDefault();
 
@@ -153,11 +204,13 @@ transactionForm.addEventListener("submit", function (event) {
     date: dateInput.value
   };
 
-transactions.push(newTransaction);
-saveTransactions();
-renderTransactions();
-updateSummary();
-transactionForm.reset();
+  transactions.push(newTransaction);
+
+  saveTransactions();
+  renderTransactions();
+  updateSummary();
+
+  transactionForm.reset();
 });
 
 renderTransactions();
