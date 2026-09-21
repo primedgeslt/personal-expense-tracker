@@ -350,4 +350,23 @@ button[type="submit"]:focus-visible {
     grid-template-columns: 1fr;
     align-items: start;
   }
+
+.transaction-item {
+  border-left: 5px solid transparent;
+}
+
+.transaction-income {
+  border-left-color: #15803d;
+}
+
+.transaction-expense {
+  border-left-color: #b42318;
+}
+
+.transaction-income strong {
+  color: #15803d;
+}
+
+.transaction-expense strong {
+  color: #b42318;
 }
