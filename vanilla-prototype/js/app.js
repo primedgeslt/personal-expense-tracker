@@ -103,17 +103,43 @@ function renderTransactions() {
         transaction.amount
       )}`;
 
-    transactionItem.append(
-      transactionDescription,
-      transactionDetails,
-      transactionAmount
-    );
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.textContent = "Delete";
+    deleteButton.classList.add("delete-button");
+    deleteButton.dataset.transactionId = transaction.id;
+
+transactionItem.append(
+  transactionDescription,
+  transactionDetails,
+  transactionAmount,
+  deleteButton
+);
 
     transactionList.append(transactionItem);
   });
 }
 
+// delete event listener
+function deleteTransaction(transactionId) {
+  transactions = transactions.filter(function (transaction) {
+    return String(transaction.id) !== String(transactionId);
+  });
 
+  saveTransactions();
+  renderTransactions();
+  updateSummary();
+}
+
+transactionList.addEventListener("click", function (event) {
+  if (!event.target.classList.contains("delete-button")) {
+    return;
+  }
+
+  const transactionId = event.target.dataset.transactionId;
+
+  deleteTransaction(transactionId);
+});
 
 transactionForm.addEventListener("submit", function (event) {
   event.preventDefault();
