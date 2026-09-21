@@ -68,8 +68,6 @@ function updateSummary() {
   expenseTotal.textContent = formatCurrency(expenses);
 }
 
-
-
 function renderTransactions() {
   transactionList.replaceChildren();
 
@@ -82,7 +80,15 @@ function renderTransactions() {
 
   transactions.forEach(function (transaction) {
     const transactionItem = document.createElement("article");
-    transactionItem.classList.add("transaction-item");
+
+    transactionItem.classList.add(
+      "transaction-item",
+      transaction.type === "income"
+        ? "transaction-income"
+        : "transaction-expense"
+    );
+
+    transactionItem.dataset.transactionId = transaction.id;
 
     const transactionDescription = document.createElement("h3");
     transactionDescription.textContent = transaction.description;
@@ -93,7 +99,9 @@ function renderTransactions() {
 
     const transactionAmount = document.createElement("strong");
     transactionAmount.textContent =
-      `${transaction.type === "expense" ? "-" : "+"}${transaction.amount}`;
+      `${transaction.type === "expense" ? "-" : "+"}${formatCurrency(
+        transaction.amount
+      )}`;
 
     transactionItem.append(
       transactionDescription,
@@ -104,6 +112,8 @@ function renderTransactions() {
     transactionList.append(transactionItem);
   });
 }
+
+
 
 transactionForm.addEventListener("submit", function (event) {
   event.preventDefault();
