@@ -164,6 +164,10 @@ p {
   font-weight: 700;
 }
 
+#income-total {
+  color: var(--color-income);
+}
+
 
 .transaction-form-section,
 .transactions-section {
@@ -347,26 +351,37 @@ button[type="submit"]:focus-visible {
   }
 
   .transaction-item {
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
-
-.transaction-item {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
   border-left: 5px solid transparent;
+  border-radius: var(--radius-medium);
+  background: var(--color-surface);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+  #transaction-list > p {
+  margin: 0;
+  padding: 2rem;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-medium);
+  color: var(--color-muted);
+  text-align: center;
 }
 
 .transaction-income {
-  border-left-color: #15803d;
-}
+  border-left-color: var(--color-income);
 
 .transaction-expense {
-  border-left-color: #b42318;
+  border-left-color: var(--color-expense);
 }
 
 .transaction-income strong {
-  color: #15803d;
-}
+  color: var(--color-income);
 
 .transaction-expense strong {
-  color: #b42318;
+  color: var(--color-expense);
+}
+
 }
