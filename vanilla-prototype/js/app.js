@@ -8,6 +8,12 @@ const categoryInput = document.querySelector("#category");
 const dateInput = document.querySelector("#date");
 const transactionList = document.querySelector("#transaction-list");
 
+//Select the summary elements
+const balanceTotal = document.querySelector("#balance-total");
+const incomeTotal = document.querySelector("#income-total");
+const expenseTotal = document.querySelector("#expense-total");
+
+
 let transactions = loadTransactions();
 
 function loadTransactions() {
@@ -28,6 +34,41 @@ function loadTransactions() {
 function saveTransactions() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
 }
+
+//Add the currency formatter
+function formatCurrency(amount) {
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN"
+  }).format(amount);
+}
+
+// Add the totals function
+function updateSummary() {
+  const income = transactions
+    .filter(function (transaction) {
+      return transaction.type === "income";
+    })
+    .reduce(function (total, transaction) {
+      return total + transaction.amount;
+    }, 0);
+
+  const expenses = transactions
+    .filter(function (transaction) {
+      return transaction.type === "expense";
+    })
+    .reduce(function (total, transaction) {
+      return total + transaction.amount;
+    }, 0);
+
+  const balance = income - expenses;
+
+  balanceTotal.textContent = formatCurrency(balance);
+  incomeTotal.textContent = formatCurrency(income);
+  expenseTotal.textContent = formatCurrency(expenses);
+}
+
+
 
 function renderTransactions() {
   transactionList.replaceChildren();
@@ -76,10 +117,12 @@ transactionForm.addEventListener("submit", function (event) {
     date: dateInput.value
   };
 
-  transactions.push(newTransaction);
-  saveTransactions();
-  renderTransactions();
-  transactionForm.reset();
+transactions.push(newTransaction);
+saveTransactions();
+renderTransactions();
+updateSummary();
+transactionForm.reset();
 });
 
 renderTransactions();
+updateSummary();
